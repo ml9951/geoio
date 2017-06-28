@@ -20,7 +20,7 @@ from pkg_resources import resource_filename
 from tzwhere import tzwhere
 
 import tinytools as tt
-from base import GeoImage
+from .base import GeoImage
 import constants as const
 
 # Module setup
