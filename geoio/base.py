@@ -23,7 +23,7 @@ from collections import Sequence
 import tinytools as tt
 
 # package import
-import constants as const
+from .constants import DICT_GDAL_TO_NP, DICT_NP_TO_GDAL
 
 # Module setup
 gdal.UseExceptions()
@@ -1146,7 +1146,7 @@ class GeoImage(object):
         if not virtual:
             # Read data one band at a time with ReadAsArray
             zt = len(bands)
-            dt = const.DICT_GDAL_TO_NP[self.meta.gdal_dtype]
+            dt = DICT_GDAL_TO_NP[self.meta.gdal_dtype]
             data = np.empty([zt, win_ysize, win_xsize], dtype=dt)
             for i, b in enumerate(bands):
                 bobj = obj.GetRasterBand(b)
@@ -1694,7 +1694,7 @@ class GeoImage(object):
 
         # Check that the incoming array is the same dtype as the image.
         gi_dtype = self.meta.gdal_dtype
-        if not (np_array.dtype == const.DICT_GDAL_TO_NP[gi_dtype]):
+        if not (np_array.dtype == DICT_GDAL_TO_NP[gi_dtype]):
             raise ValueError("Data types must match exactly to do a "
                              "data replace.")
 
@@ -1827,10 +1827,10 @@ def create_geo_image(new_file_name, data_np_array, gdal_driver_name,
     ## routine can pass either the gdal data type int or the alias (such as
     ## gdal.GDT_Float32).
     # If the data type passed is of type numpy, convert it to GdalDataType
-    if data_type in const.DICT_NP_TO_GDAL:
-        data_type = const.DICT_NP_TO_GDAL[data_type]
+    if data_type in DICT_NP_TO_GDAL:
+        data_type = DICT_NP_TO_GDAL[data_type]
     # If gdal dtype class then pass
-    elif data_type in const.DICT_GDAL_TO_NP:
+    elif data_type in DICT_GDAL_TO_NP:
         # Maybe convert to the integer form?
         pass
     # if gdal dtype name, then convert to data type integer alias
@@ -1850,7 +1850,7 @@ def create_geo_image(new_file_name, data_np_array, gdal_driver_name,
     # Create driver and data set object
     driver = gdal.GetDriverByName(gdal_driver_name)
     # Check that the driver supports the data_np_array.dtype
-    dstr = gdal.GetDataTypeName(const.DICT_NP_TO_GDAL[data_np_array.dtype])
+    dstr = gdal.GetDataTypeName(DICT_NP_TO_GDAL[data_np_array.dtype])
     dlist = driver.GetMetadata()['DMD_CREATIONDATATYPES'].split()
     if not dstr in dlist:
         raise ValueError("The data type of the provided numpy array is not "
