@@ -7,7 +7,7 @@ as DGImage) can build on this class to provide data specific metadata and
 spectral transformations.
 '''
 
-from __future__ import division
+
 
 from osgeo import gdal, gdalconst, osr, ogr
 import numpy as np
@@ -219,7 +219,7 @@ class GeoImage(object):
             # so try/except on tt.cmd_line.exec_cmd won't work...
             # Check that file exists to see if the buildvrt succeeded.
             if not os.path.isfile(file_temp.name):
-                raise StandardError("Creation of file " + file_temp.name + " "
+                raise Exception("Creation of file " + file_temp.name + " "
                                     "failed. This could possibly be a "
                                     "write access problem?")
 
@@ -235,7 +235,7 @@ class GeoImage(object):
             file_temp.close()
 
             if os.path.isfile(file_temp.name):
-                raise StandardError("Removal of file " + file_temp.name + " "
+                raise Exception("Removal of file " + file_temp.name + " "
                                     "failed. There is something wrong with "
                                     "the .TIL handling.")
 
@@ -325,7 +325,7 @@ class GeoImage(object):
 
     def print_img_summary(self):
         """Echo the object's __repr__ method."""
-        print(self.__repr__())
+        print((self.__repr__()))
 
 
     def __iter__(self):
@@ -547,7 +547,7 @@ class GeoImage(object):
             requested region of the image.
         """
 
-        for c in xrange(len(self.files.dfile_tiles)):
+        for c in range(len(self.files.dfile_tiles)):
             yield self.get_data(component=c, **kwargs)
 
 
@@ -555,12 +555,12 @@ class GeoImage(object):
         """This method iterates (via yeild) through a vector object or file.
         Any kwargs valid for get_data can be passed through."""
 
-        if 'window' in kwargs.keys():
+        if 'window' in list(kwargs.keys()):
             raise ValueError("The window argument is not valid for this " \
                              "method. They both define a retrieval " \
                              "geometry.  Pass one or the other.")
 
-        if 'geom' in kwargs.keys():
+        if 'geom' in list(kwargs.keys()):
             raise ValueError("The geom argument is not valid for this " \
                              "method. The vector file passed in defines " \
                              "the retrieval geometry.")
@@ -581,17 +581,17 @@ class GeoImage(object):
         for feat in lyr:
             # Return feature properties data is requested
             if properties is True:
-                prop_out = feat.items()
+                prop_out = list(feat.items())
             elif properties:
                 if isinstance(properties, (list, tuple, str)):
                     if isinstance(properties, str):
                         properties = [properties]
-                    it = feat.items()
-                    if not all(x for x in properties if x in it.keys()):
+                    it = list(feat.items())
+                    if not all(x for x in properties if x in list(it.keys())):
                         raise ValueError("One or more of the requested "
                                          "properties are not in the vector "
                                          "feature.")
-                    prop_out = {x: it[x] for x in properties if x in it.keys()}
+                    prop_out = {x: it[x] for x in properties if x in list(it.keys())}
                     if not prop_out:
                         prop_out = None
                         warnings.warn("No properties value found matching "
@@ -619,16 +619,16 @@ class GeoImage(object):
                     filter = [filter]
 
                 # Get feature properties to check against.
-                prop_test = feat.items()
+                prop_test = list(feat.items())
 
                 # raise warning if a filter item key is not in properties
-                if any(f.keys()[0] not in prop_test.keys() for f in filter):
+                if any(list(f.keys())[0] not in list(prop_test.keys()) for f in filter):
                     warnings.warn("Requested filter key is not present in "
                                   "vector properties.")
 
                 # If any filter is caught, pass on, otherwise return
-                if any(prop_test.get(d.keys()[0], None) ==
-                                    d.values()[0] for d in filter):
+                if any(prop_test.get(list(d.keys())[0], None) ==
+                                    list(d.values())[0] for d in filter):
                     pass
                 else:
                     if properties:
@@ -696,17 +696,17 @@ class GeoImage(object):
                              "a string that describes a vector object or a " \
                              "path to a valid vector file.")
 
-        if 'window' in kwargs.keys():
+        if 'window' in list(kwargs.keys()):
             raise ValueError("The window argument is not valid for this " \
                              "method. The vector file passed in defines " \
                              "the retrieval geometry.")
 
-        if 'geom' in kwargs.keys():
+        if 'geom' in list(kwargs.keys()):
             raise ValueError("The geom argument is not valid for this " \
                              "method. The vector file passed in defines " \
                              "the retrieval geometry.")
 
-        if 'mask' in kwargs.keys():
+        if 'mask' in list(kwargs.keys()):
             raise ValueError("A mask request is not valid for this method " \
                              "because it retrives data from the full extent " \
                              "of the vector.  You might want a rasterize " \
@@ -783,7 +783,7 @@ class GeoImage(object):
             ul_img = ul_vec
             lr_img = lr_vec
 
-        xs,ys = self.proj_to_raster(*zip(*[ul_img,lr_img]))
+        xs,ys = self.proj_to_raster(*list(zip(*[ul_img,lr_img])))
 
         xoff = int(math.floor(min(xs)))
         yoff = int(math.floor(min(ys)))
@@ -1048,7 +1048,7 @@ class GeoImage(object):
 
         # If bands not requested, set to pull all bands
         if not bands:
-            bands = range(1,obj.RasterCount+1)
+            bands = list(range(1,obj.RasterCount+1))
 
         # Set window to pull
         if window and geom:
@@ -1343,7 +1343,7 @@ class GeoImage(object):
         # importing downsample trigger numba compile - which slows down the
         # whole package import if it is done at import.  So, only pull in
         # and compile when the code is necessary.
-        import downsample
+        from . import downsample
 
         if arr is None:
             logger.debug('Array not passed in, retrieving all bands...')
@@ -1368,7 +1368,7 @@ class GeoImage(object):
         # importing downsample trigger numba compile - which slows down the
         # whole package import if it is done at import.  So, only pull in
         # and compile when the code is necessary.
-        import downsample
+        from . import downsample
 
         ####
         # Eventually add code to check and unify projection
@@ -1390,7 +1390,7 @@ class GeoImage(object):
         if arr is None:
             arr = self.get_data()
 
-        if kwargs.has_key('no_data_value'):
+        if 'no_data_value' in kwargs:
             no_data_value = kwargs['no_data_value']
             del kwargs['no_data_value']
         elif self.meta.no_data_value:
@@ -1437,7 +1437,7 @@ class GeoImage(object):
         # importing downsample trigger numba compile - which slows down the
         # whole package import if it is done at import.  So, only pull in
         # and compile when the code is necessary.
-        import downsample
+        from . import downsample
 
         if arr is None:
             logger.debug('Array not passed in, retrieving all bands...')
@@ -1705,7 +1705,7 @@ class GeoImage(object):
 
         # Load new data into gdal object file
         nbands = self.shape[0]
-        for i in xrange(nbands):
+        for i in range(nbands):
             b = self._fobj.GetRasterBand(i+1).WriteArray(np_array[i,:,:])
             b = None
 

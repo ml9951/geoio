@@ -122,9 +122,9 @@ def aggregate_numba_3d(arr,x_steps,y_steps):
     out = np.zeros((arr.shape[0],len(x_steps)-1,len(y_steps)-1),
                    dtype=arr.dtype)
 
-    for b in xrange(out.shape[0]):
-        for x in xrange(out.shape[1]):
-            for y in xrange(out.shape[2]):
+    for b in range(out.shape[0]):
+        for x in range(out.shape[1]):
+            for y in range(out.shape[2]):
                 out[b,x,y] = aggregate_pixel(arr[b,:,:],
                                              x_steps[x:x+2],
                                              y_steps[y:y+2])
@@ -142,8 +142,8 @@ def aggregate_numba_3d(arr,x_steps,y_steps):
             '(a,b),(c),(d),(m,n)',target='parallel',nopython=True)
 def aggregate_guvec(arr, x_steps, y_steps, out):
     """TBD"""
-    for x in xrange(out.shape[0]):
-        for y in xrange(out.shape[1]):
+    for x in range(out.shape[0]):
+        for y in range(out.shape[1]):
             out[x,y] = aggregate_pixel(arr,x_steps[x:x+2],y_steps[y:y+2])
 
 # The types handled are the same in contstants.py DICT_GDAL_TO_NP
@@ -158,8 +158,8 @@ def aggregate_guvec(arr, x_steps, y_steps, out):
              nopython=True)
 def nearest_guvec(arr, x_steps, y_steps, out):
     """TBD"""
-    for x in xrange(out.shape[0]):
-        for y in xrange(out.shape[1]):
+    for x in range(out.shape[0]):
+        for y in range(out.shape[1]):
             out[x, y] = nearest_pixel(arr,x_steps[x:x + 2],y_steps[y:y + 2])
 
 # The types handled are the same in contstants.py DICT_GDAL_TO_NP
@@ -174,8 +174,8 @@ def nearest_guvec(arr, x_steps, y_steps, out):
              nopython=True)
 def max_guvec(arr, x_steps, y_steps, out):
     """TBD"""
-    for x in xrange(out.shape[0]):
-        for y in xrange(out.shape[1]):
+    for x in range(out.shape[0]):
+        for y in range(out.shape[1]):
             out[x, y] = max_pixel(arr,x_steps[x:x + 2],y_steps[y:y + 2])
 
 
@@ -191,6 +191,6 @@ def max_guvec(arr, x_steps, y_steps, out):
              nopython=True)
 def min_guvec(arr, x_steps, y_steps, out):
     """TBD"""
-    for x in xrange(out.shape[0]):
-        for y in xrange(out.shape[1]):
+    for x in range(out.shape[0]):
+        for y in range(out.shape[1]):
             out[x, y] = min_pixel(arr,x_steps[x:x + 2],y_steps[y:y + 2])

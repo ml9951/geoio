@@ -11,7 +11,7 @@ except ImportError:
 try:
     from numba import (jit, guvectorize, vectorize, float64, float32,
                        int16, uint16, double)
-    from downsample_numba import *
+    from .downsample_numba import *
     use_numba = True
 except ImportError:
     use_numba = False
@@ -229,7 +229,7 @@ def run_opencv_resize(arr,x_steps,y_steps,type_cv_code):
     size = (len(x_steps)-1,len(y_steps)-1)
     out = np.empty([arr.shape[0]]+list(size))
 
-    for b in xrange(out.shape[0]):
+    for b in range(out.shape[0]):
         out[b,:,:] = cv2.resize(arr[b,:,:],dsize=size[::-1],dst=None,
                                                 interpolation=type_cv_code)
     return out
@@ -282,14 +282,14 @@ def main():
 
     start = time.time()
     out_small_numba = downsample(data_small,shape=[300,300],source='numba')
-    print('small numba:  %s' % (time.time()-start))
+    print(('small numba:  %s' % (time.time()-start)))
 
     start = time.time()
     out_small_cv2 = downsample(arr=data_small,shape=(300,300),source='cv2')
-    print('small cv2:  %s' % (time.time()-start))
+    print(('small cv2:  %s' % (time.time()-start)))
 
-    print('Max diff is:  %s' % (out_small_numba-out_small_cv2).max())
-    print('Min diff is:  %s' % (out_small_numba-out_small_cv2).min())
+    print(('Max diff is:  %s' % (out_small_numba-out_small_cv2).max()))
+    print(('Min diff is:  %s' % (out_small_numba-out_small_cv2).min()))
 
     # img_big = geoio.GeoImage('/mnt/panasas/nwl/data_HIRES/Gibraltar/VNIR/054312817010_01_P001_MUL/15FEB28112650-M2AS_R1C1-054312817010_01_P001.TIF')
     # data_big = img_big.get_data()

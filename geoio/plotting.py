@@ -46,7 +46,7 @@ def imshow(data,stretch=[0.02,0.98],stretch_type='linear'):
     data = tt.np_img.conv_to_bandslast(data)
     data = data.astype('float32')
     lims = np.percentile(data,(2,98),axis=(0,1))
-    for x in xrange(len(data[0,0,:])):
+    for x in range(len(data[0,0,:])):
         top = lims[:,x][1]
         bottom = lims[:,x][0]
         data[:,:,x] = (data[:,:,x]-bottom)/float(top-bottom)
@@ -81,7 +81,7 @@ def hist(data):
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     plt.hold(True)
-    for x in xrange(len(data[:,0,0])):
+    for x in range(len(data[:,0,0])):
         counts, edges = np.histogram(data[x,:,:],bins=100)
         centers = [(edges[i]+edges[i+1])/2.0 for i,v in enumerate(edges[:-1])]
         ax1.plot(centers,counts)
